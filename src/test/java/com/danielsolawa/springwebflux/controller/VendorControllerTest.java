@@ -91,7 +91,18 @@ public class VendorControllerTest {
 
     @Test
     public void testUpdateVendor() throws Exception {
+        Mono<Vendor> vendorMono = Mono.just(Vendor.builder().firstName("tom").lastName("hanks").build());
 
+        given(vendorRepository.save(any(Vendor.class))).willReturn(Mono.just(Vendor.builder().build()));
+
+        webTestClient.put()
+                    .uri(VendorController.BASE_URL + "/dfrdf")
+                    .body(vendorMono, Vendor.class)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody(Vendor.class);
+
+        then(vendorRepository).should().save(any(Vendor.class));
 
 
     }
