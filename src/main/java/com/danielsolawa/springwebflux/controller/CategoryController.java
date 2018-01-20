@@ -27,6 +27,7 @@ public class CategoryController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     Flux<Category> getCategoryList(){
+
         return categoryRepository.findAll();
     }
 
