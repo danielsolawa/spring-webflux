@@ -1,7 +1,9 @@
 package com.danielsolawa.springwebflux.controller;
 
 import com.danielsolawa.springwebflux.domain.Category;
+import com.danielsolawa.springwebflux.domain.Vendor;
 import com.danielsolawa.springwebflux.repository.CategoryRepository;
+import org.reactivestreams.Publisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -36,5 +38,12 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.OK)
     Mono<Category> getCategoryById(@PathVariable String id){
         return categoryRepository.findById(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    Mono<Void> createNewCategory(@RequestBody Publisher<Category> category){
+
+       return categoryRepository.saveAll(category).then();
     }
 }
