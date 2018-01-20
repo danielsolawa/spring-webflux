@@ -93,4 +93,23 @@ public class CategoryControllerTest {
 
 
     }
+
+
+    @Test
+    public void testUpdateCategory() throws Exception {
+        Mono<Category> category = Mono.just(Category.builder().description("none").build());
+
+        given(categoryRepository.save(any(Category.class))).willReturn(Mono.just(Category.builder().build()));
+
+        webTestClient.put()
+                    .uri(CategoryController.BASE_URL + "/1")
+                    .body(category, Category.class)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody(Category.class);
+
+        then(categoryRepository).should().save(any(Category.class));
+
+
+    }
 }

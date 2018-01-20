@@ -1,5 +1,6 @@
 package com.danielsolawa.springwebflux.controller;
 
+import com.danielsolawa.springwebflux.domain.Category;
 import com.danielsolawa.springwebflux.domain.Vendor;
 import com.danielsolawa.springwebflux.repository.VendorRepository;
 import org.junit.Before;
@@ -84,6 +85,14 @@ public class VendorControllerTest {
                     .expectBody(Vendor.class);
 
         then(vendorRepository).should().saveAll(any(Publisher.class));
+
+    }
+
+
+    @Test
+    public void testUpdateVendor() throws Exception {
+
+
 
     }
 }
