@@ -2,6 +2,7 @@ package com.danielsolawa.springwebflux.controller;
 
 import com.danielsolawa.springwebflux.domain.Vendor;
 import com.danielsolawa.springwebflux.repository.VendorRepository;
+import org.reactivestreams.Publisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -34,5 +35,11 @@ public class VendorController {
     @ResponseStatus(HttpStatus.OK)
     Mono<Vendor> getVendorById(@PathVariable  String id){
         return vendorRepository.findById(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    Mono<Void> createNewVendor(@RequestBody  Publisher<Vendor> vendorPublisher){
+        return vendorRepository.saveAll(vendorPublisher).then();
     }
 }
