@@ -16,6 +16,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by Daniel Solawa on 2018-01-20.
@@ -105,5 +108,43 @@ public class VendorControllerTest {
         then(vendorRepository).should().save(any(Vendor.class));
 
 
+    }
+
+    @Test
+    public void namePatchVendorWithChanges() {
+        Mono<Vendor> vendorMono = Mono.just(Vendor.builder().firstName("Martin").lastName("Luther").build());
+
+        given(vendorRepository.findById(anyString())).willReturn(Mono.just(Vendor.builder().build()));
+        given(vendorRepository.save(any(Vendor.class))).willReturn(Mono.just(Vendor.builder().build()));
+
+        webTestClient.patch()
+                .uri(VendorController.BASE_URL + "/eddfdf")
+                .body(vendorMono, Vendor.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Vendor.class);
+
+
+        verify(vendorRepository, times(1)).findById(anyString());
+        verify(vendorRepository, times(1)).save(any(Vendor.class));
+    }
+
+    @Test
+    public void namePatchVendorWithNoChanges() {
+        Mono<Vendor> vendorMono = Mono.just(Vendor.builder().build());
+
+        given(vendorRepository.findById(anyString())).willReturn(Mono.just(Vendor.builder().build()));
+        given(vendorRepository.save(any(Vendor.class))).willReturn(Mono.just(Vendor.builder().build()));
+
+        webTestClient.patch()
+                .uri(VendorController.BASE_URL + "/eddfdf")
+                .body(vendorMono, Vendor.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Vendor.class);
+
+
+        verify(vendorRepository, times(1)).findById(anyString());
+        verify(vendorRepository, never()).save(any(Vendor.class));
     }
 }
