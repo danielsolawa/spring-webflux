@@ -16,6 +16,9 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by Daniel Solawa on 2018-01-20.
@@ -111,5 +114,42 @@ public class CategoryControllerTest {
         then(categoryRepository).should().save(any(Category.class));
 
 
+    }
+
+    @Test
+    public void testPatchCategory() {
+        Mono<Category> categoryMono = Mono.just(Category.builder().description("new description").build());
+
+        given(categoryRepository.findById(anyString())).willReturn(Mono.just(Category.builder().build()));
+        given(categoryRepository.save(any(Category.class))).willReturn(Mono.just(Category.builder().build()));
+
+        webTestClient.patch()
+                    .uri(CategoryController.BASE_URL + "/sdssd")
+                    .body(categoryMono, Category.class)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody(Category.class);
+
+        verify(categoryRepository, times(1)).findById(anyString());
+        verify(categoryRepository, times(1)).save(any(Category.class));
+
+    }
+
+    @Test
+    public void testPatchCategoryWithoutChanges() {
+        Mono<Category> categoryMono = Mono.just(Category.builder().build());
+
+        given(categoryRepository.findById(anyString())).willReturn(Mono.just(Category.builder().build()));
+        given(categoryRepository.save(any(Category.class))).willReturn(Mono.just(Category.builder().build()));
+
+        webTestClient.patch()
+                .uri(CategoryController.BASE_URL + "/sdssd")
+                .body(categoryMono, Category.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Category.class);
+
+        verify(categoryRepository, times(1)).findById(anyString());
+        verify(categoryRepository, never()).save(any(Category.class));
     }
 }
